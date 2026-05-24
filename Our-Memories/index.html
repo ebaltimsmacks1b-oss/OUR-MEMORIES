@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Gallery 💖</title>
+
+<style>
+:root {
+    --primary-color: #ff4b5c;
+    --cinema-black: #0a0a0c;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--cinema-black);
+    font-family: 'Georgia', serif;
+    overflow: hidden;
+}
+
+/* 🌌 CINEMATIC BACKGROUND */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,75,92,0.15), transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(255,182,193,0.1), transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 60%);
+    animation: drift 10s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes drift {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+/* --- LOCK SCREEN --- */
+#lock-screen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, #1a1a24, #050508);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease;
+}
+
+.pin-box {
+    text-align: center;
+    padding: 40px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.pin-box h2 {
+    color: white;
+    font-weight: 300;
+}
+
+.pin-box input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--primary-color);
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    width: 140px;
+    margin: 15px 0;
+    outline: none;
+}
+
+.pin-box button {
+    background: var(--primary-color);
+    border: none;
+    padding: 10px 25px;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* ERROR */
+#error-msg {
+    color: var(--primary-color);
+    display: none;
+    margin-top: 10px;
+}
+
+/* --- GALLERY WRAPPER --- */
+#gallery-wrapper {
+    opacity: 0;
+    transition: opacity 2s ease;
+    position: relative;
+    z-index: 2;
+    height: 100%;
+}
+
+header {
+    text-align: center;
+    padding-top: 40px;
+    color: white;
+    letter-spacing: 3px;
+}
+
+/* SLIDES */
+.gallery-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.slide.active {
+    display: flex;
+    animation: fade 1.2s ease;
+}
+
+@keyframes fade {
+    from {opacity:0; transform: scale(1.03); filter: blur(5px);}
+    to {opacity:1; transform: scale(1); filter: blur(0);}
+}
+
+.slide img, .slide video {
+    max-width: 85%;
+    max-height: 65%;
+    border-radius: 10px;
+}
+
+/* 💖 HEARTS */
+.heart {
+    position: absolute;
+    color: var(--primary-color);
+    animation: float 6s linear forwards;
+    bottom: -50px;
+    pointer-events: none;
+}
+
+@keyframes float {
+    to {
+        transform: translateY(-120vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* AUDIO */
+audio { display:none; }
+
+</style>
+</head>
+
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lock-screen">
+    <div class="pin-box">
+        <h2>Enter Security PIN</h2>
+        <input type="password" id="pin-input" maxlength="4" placeholder="••••">
+        <br>
+        <button onclick="checkPIN()">Unlock Memories</button>
+        <div id="error-msg">Incorrect PIN ❤️</div>
+    </div>
+</div>
+
+<!-- MUSIC -->
+<audio id="bg-music" src="music/song.mp3" loop></audio>
+
+<!-- GALLERY -->
+<div id="gallery-wrapper">
+
+    <header>
+        <h1>A.F.N19 X E.T16 💖</h1>
+    </header>
+
+    <div class="gallery-container">
+
+        <!-- 12 IMAGES -->
+        <div class="slide active"><img src="photos/1.jpg"></div>
+        <div class="slide"><img src="photos/2.jpg"></div>
+        <div class="slide"><img src="photos/3.jpg"></div>
+        <div class="slide"><img src="photos/4.jpg"></div>
+        <div class="slide"><img src="photos/5.jpg"></div>
+        <div class="slide"><img src="photos/6.jpg"></div>
+        <div class="slide"><img src="photos/7.jpg"></div>
+        <div class="slide"><img src="photos/8.jpg"></div>
+        <div class="slide"><img src="photos/9.jpg"></div>
+        <div class="slide"><img src="photos/10.jpg"></div>
+        <div class="slide"><img src="photos/11.jpg"></div>
+        <div class="slide"><img src="photos/12.jpg"></div>
+
+        <!-- VIDEO -->
+        <div class="slide">
+            <video id="gallery-video" src="video/1.mp4"></video>
+        </div>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+let currentSlide = 0;
+const slides = document.querySelectorAll(".slide");
+const video = document.getElementById("gallery-video");
+const music = document.getElementById("bg-music");
+let interval;
+
+window.checkPIN = function () {
+
+    let input = document.getElementById("pin-input").value;
+
+    if (input.toUpperCase() === "RB16") {
+
+        document.getElementById("lock-screen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("lock-screen").style.display = "none";
+            document.getElementById("gallery-wrapper").style.opacity = "1";
+        }, 1000);
+
+        // MUSIC FADE IN
+        music.volume = 0;
+        music.play().catch(()=>{});
+
+        let v = 0;
+        let fade = setInterval(() => {
+            if (v < 1) {
+                v += 0.03;
+                music.volume = v;
+            } else {
+                clearInterval(fade);
+            }
+        }, 200);
+
+        startSlides();
+        setInterval(createHeart, 250);
+
+    } else {
+        document.getElementById("error-msg").style.display = "block";
+    }
+};
+
+function showSlide(index) {
+
+    slides[currentSlide].classList.remove("active");
+
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
+
+    currentSlide = index;
+    slides[currentSlide].classList.add("active");
+
+    if (currentSlide === slides.length - 1 && video) {
+
+        music.volume = 0.2;
+        video.play();
+
+        clearInterval(interval);
+
+        video.onended = () => {
+            music.volume = 1;
+            nextSlide();
+            startSlides();
+        };
+    }
+}
+
+function nextSlide() {
+    showSlide((currentSlide + 1) % slides.length);
+}
+
+function startSlides() {
+    interval = setInterval(nextSlide, 4200);
+}
+
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+
+    const symbols = ["❤️","💖","💝","💕"];
+    heart.innerText = symbols[Math.floor(Math.random()*symbols.length)];
+
+    heart.style.left = Math.random()*100 + "vw";
+    heart.style.fontSize = (Math.random()*15 + 15) + "px";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 7000);
+}
+
+});
+</script>
+
+</body>
+</html>
